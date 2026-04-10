@@ -1,99 +1,205 @@
-# Agents
+# Agents — beads-ui (mikez93 fork)
 
-## Beads (bd) — Work Tracking
+## About This Fork
 
-Use MCP `beads` (bd) as our dependency‑aware issue tracker. Run
-`beads/quickstart` to learn how to use it.
+This is **[mikez93/beads-ui](https://github.com/mikez93/beads-ui)** — a fork of [mantoni/beads-ui](https://github.com/mantoni/beads-ui), the web UI for the [Beads](https://github.com/steveyegge/beads) CLI.
 
-### Issue Types
+**Why this fork exists**: upstream has accumulated known bugs that are not getting fixed — P0 issues we've been patching locally for months on every release, UX bugs that break multi-worktree workflows, and silent failures in the board and comment code paths. Rather than continue re-applying patches on every upstream update, we took ownership. We fix the bugs properly, open PRs back to upstream when the fixes are generic, and ship our own npm package when upstream stays behind.
 
-- `bug` - Something broken that needs fixing
-- `feature` - New functionality
-- `task` - Work item (tests, docs, refactoring)
-- `epic` - Large feature composed of multiple issues
-- `chore` - Maintenance work (dependencies, tooling)
+**This is the primary web UI for Beads in our setup.** It replaces `bead-kanban` (unmaintained since Nov 2025). See `../agentic-coding-resources/intel-vault/tools/beads-ecosystem/beads-ui/README.md` in the sibling intel-vault for the broader ecosystem context, deployment notes, and the history of why we got here.
 
-### Priorities
+### Upstream relationship
 
-- `0` - Critical (security, data loss, broken builds)
-- `1` - High (major features, important bugs)
-- `2` - Medium (nice-to-have features, minor bugs)
-- `3` - Low (polish, optimization)
-- `4` - Backlog (future ideas)
+- `origin` → this fork (`mikez93/beads-ui`)
+- `upstream` → `mantoni/beads-ui`
+- We pull from `upstream/main` periodically and rebase our fixes on top.
+- When a fix is upstreamable (most of ours are), we open a PR back to `mantoni/beads-ui`.
+- When a fix is fork-specific (e.g., branding or behavior we want that upstream won't accept), we keep it local.
 
-### Dependency Types
+### Current work
 
-- `blocks` - Hard dependency (issue X blocks issue Y)
-- `related` - Soft relationship (issues are connected)
-- `parent-child` - Epic/subtask relationship
-- `discovered-from` - Track issues discovered during work
+See `.specs/` for active PRDs and phase plans. Start with the most recently dated file. **Before implementing any non-trivial change, create or update a spec in `.specs/` first.**
 
-Only `blocks` dependencies affect the ready work queue.
+### Known issues we're tracking (upstream)
 
-### Structured Fields and Labels
+- **[#58](https://github.com/mantoni/beads-ui/issues/58)** — P0 — Issues view limited to 50, "Status: Any" excludes closed. We've been patching this locally in `server/list-adapters.js` for months. Upstream issue is still open.
+- **[#77](https://github.com/mantoni/beads-ui/issues/77)** — P0 — Workspace dropdown shows identical labels for worktrees of the same repo. We filed this one ourselves.
+- **[#57](https://github.com/mantoni/beads-ui/issues/57)** — P0 — Issue/epic list columns overlap with long project-prefixed IDs.
+- **[#67](https://github.com/mantoni/beads-ui/issues/67)** — P1 — Board: adding a comment appears to succeed but the comment is never saved or shown.
+- **[#68](https://github.com/mantoni/beads-ui/issues/68)** — P1 — Failed to load board because of unknown flag.
+- **[#74](https://github.com/mantoni/beads-ui/issues/74)** — P1 — Cannot create comment from the UI.
+- **[#42](https://github.com/mantoni/beads-ui/issues/42)** — P2 — Show `created_at` and `closed_at` timestamps in issue detail view.
+- **[#41](https://github.com/mantoni/beads-ui/issues/41)** — P2 — Allow editing and deleting comments.
+- **[#49](https://github.com/mantoni/beads-ui/issues/49)** — P3 — Show status indicators for dependencies / dependents.
 
-- Use issue `type` and `priority` fields.
-- Use issue type "epic" and `parent-child` dependencies.
-- Use `related` or `discovered-from` dependencies.
-- Area pointers are labels, e.g.: `frontend`, `backend`
+Lower-priority backlog captured in `.specs/`.
 
-### Agent Workflow
+---
 
-If no issue is specified, run `bd ready` and claim an unblocked issue.
+## Development Workflow
 
-1. Open issue with `bd show <id>` and read all linked docs.
-2. Assign to `agent`, update status as you work (`in_progress` → `closed`);
-   maintain dependencies, and attach notes/links for traceability.
-3. Discover new work? Create linked issue with dependency
-   `discovered-from:<parent-id>` and reference it in a code comment.
-4. Land the change; run tests/lint; update any referenced docs.
-5. Close the issue with `bd close <id>`.
+### Setup
 
-Never update `CHANGES.md`.
+```sh
+npm install
+npm start             # dev server on port 3000 (default)
+# or to run from any project dir using a linked package:
+npm link
+cd /your/project
+bdui start --open
+```
+
+### Pre-handoff validation — run BEFORE committing
+
+```sh
+npm run all           # lint + tsc + test + prettier:check
+```
+
+Individual commands:
+
+| Command | Purpose |
+|---|---|
+| `npm run lint` | ESLint |
+| `npm run tsc` | TypeScript type check (JSDoc mode — no emit) |
+| `npm test` | Vitest run (all test files) |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run prettier:write` | Format all files |
+| `npm run prettier:check` | Check formatting (CI-compatible) |
+| `npm run build` | Build the client bundle (`app/main.bundle.js`) |
+
+### Spec-driven development
+
+Every non-trivial change starts with a spec in `.specs/`. File naming: `YYYY-MM-DD-descriptive-slug.md` (use today's date, short kebab-case slug).
+
+Specs should include:
+
+- Context and problem statement
+- Goals and non-goals
+- Phased plan with file-level detail (target files, line numbers, specific changes)
+- Testing strategy (what tests to add, what to verify manually)
+- Success criteria
+
+The spec is the source of truth for the work. Update it as you learn.
+
+### Commits
+
+- Follow conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `perf:`
+- Reference GitHub issues in the footer: `Refs: #58` or `Fixes: #77`
+- Reference the spec file when relevant: `Spec: .specs/2026-04-09-fork-stabilization-prd.md`
+- **Never update `CHANGES.md` manually** — it is generated by `@studio/changes` during release.
+
+### Upstream sync
+
+When `upstream/main` moves:
+
+```sh
+git fetch upstream
+git rebase upstream/main
+
+# Resolve any conflicts (most likely in server/list-adapters.js and app/views/workspace-picker.js)
+npm run all
+
+git push --force-with-lease origin main
+```
+
+### Opening PRs to upstream
+
+When a fix is ready and generic enough to benefit all users:
+
+```sh
+gh pr create --repo mantoni/beads-ui --base main --title "fix: ..." --body "Fixes #NN. ..."
+```
+
+Keep PRs small and focused — one issue per PR. Include the upstream issue number in the title.
+
+---
+
+## Project Structure
+
+```
+beads-ui/
+├── app/                    # Client — Lit-html rendered SPA
+│   ├── main.js             # Entry point
+│   ├── state.js            # Client state machine
+│   ├── ws.js               # WebSocket client
+│   ├── router.js           # Hash-based routing
+│   ├── protocol.js         # Message type definitions
+│   ├── data/               # Data stores (subscriptions, selectors)
+│   ├── utils/              # Rendering utilities (badges, markdown, priority)
+│   └── views/              # Individual views
+│       ├── list.js             # Issues list (target for #57 column overlap)
+│       ├── board.js            # Kanban board (target for #67, #68)
+│       ├── detail.*            # Issue detail view
+│       ├── workspace-picker.js # Workspace dropdown (target for #77)
+│       ├── issue-dialog.js
+│       └── new-issue-dialog.js
+├── server/                 # Node.js backend
+│   ├── index.js            # HTTP + WS entry
+│   ├── app.js              # Express app, HTTP routes
+│   ├── ws.js               # WebSocket server, CURRENT_WORKSPACE singleton
+│   ├── list-adapters.js    # bd CLI arg mapping (target for #58)
+│   ├── list-adapters.test.js
+│   ├── bd.js               # bd process invocation
+│   └── cli/                # `bdui` CLI entry
+├── bin/                    # `bdui` executable
+├── scripts/                # Build scripts (esbuild)
+├── docs/                   # Dev docs
+└── .specs/                 # PRDs and phase plans (fork-specific)
+```
+
+---
 
 ## Coding Standards
 
-- Use **ECMAScript modules**.
-- Use `PascalCase` for **classes** and **interfaces**.
-- Use `camelCase` for **functions** and **methods**.
-- Use `lower_snake_case` for **variables and parameters**.
-  - Use `camelCase` for variables referencing functions or callable objects.
-  - Use `PascalCase` only for class constructors or imported class symbols.
-- Use `UPPER_SNAKE_CASE` for **constants**.
-- Use `kebab-case` for **file and directory names**.
-- Use `.js` files for all runtime code with JSDoc type annotations (TypeScript
-  mode).
-- Use `.ts` files **only** for interface and type definitions. These files must
-  not contain runtime code or side effects.
-- Place a JSDoc type import block at the top of each file when needed:
-  ```js
-  /**
-   * @import { X, Y, Z } from './file.js'
-   */
-  ```
-  Omit this block if the symbol is already defined within the file.
-- Add JSDoc to all functions and methods:
-  - Declare all parameters with `@param`.
-  - Add `@returns` only when the return type is **not self-evident** from the
-    code (e.g., complex conditionals, unions, or context-dependent types). Omit
-    it when the return value is **clear and unambiguous** from the function body
-    or signature.
-- If a local variable’s type may change, or is initialized as an empty
-  collection (`{}`, `[]`, `new Set()`, `new Map()`), add a `@type` JSDoc
-  annotation to specify the intended type. This applies to both `let` and
-  `const` when inference is ambiguous.
-- Use braces for all control flow statements, even single-line bodies.
-- Use optional chaining (`?.`, `??`, etc.) only when a value is **intentionally
-  nullable**. Prefer explicit type narrowing to guarantee value safety.
+Inherited from upstream — keep these intact so our PRs back to upstream are clean.
+
+- **ECMAScript modules** (`.js` with `"type": "module"` in `package.json`).
+- **JSDoc type annotations** — this project uses TypeScript in strict mode via `tsc --noEmit` against JSDoc. Type errors block CI.
+- **`.ts` files** are for **interface/type definitions only** — no runtime code, no side effects.
+- **Node.js ≥22** required.
+
+### Naming conventions
+
+| Category | Convention | Example |
+|---|---|---|
+| Classes, interfaces | `PascalCase` | `WorkspaceStore`, `IssueList` |
+| Functions, methods | `camelCase` | `fetchIssues`, `registerWorkspace` |
+| Variables, parameters | `lower_snake_case` | `workspace_path`, `bd_args` |
+| Function-valued variables | `camelCase` | `const handleClick = ...` |
+| Constants | `UPPER_SNAKE_CASE` | `MAX_RETRIES`, `DEFAULT_PORT` |
+| File and directory names | `kebab-case` | `workspace-picker.js` |
+
+### JSDoc requirements
+
+Place a JSDoc type import block at the top of each file when needed:
+
+```js
+/**
+ * @import { X, Y, Z } from './file.js'
+ */
+```
+
+Add JSDoc to all functions and methods:
+
+- Declare all parameters with `@param`.
+- Add `@returns` only when the return type is **not self-evident** from the code (complex conditionals, unions, context-dependent types). Omit it when return is clear from the signature or body.
+
+If a local variable's type may change, or is initialized as an empty collection (`{}`, `[]`, `new Set()`, `new Map()`), add a `@type` annotation to disambiguate.
+
+### Control flow and nullability
+
+- **Braces for all control flow statements**, even single-line bodies.
+- Use optional chaining (`?.`, `??`) only when a value is **intentionally nullable**. Prefer explicit type narrowing over defensive chaining.
+
+---
 
 ## Unit Testing Standards
 
-- Write short, focused test functions asserting **one specific behavior** each.
-- Name tests using **active verbs** that describe behavior, e.g.
-  `returns correct value`, `throws on invalid input`, `emits event`,
-  `calls handler`. Avoid starting names with “should …”.
-- Follow the structure: **setup → execution → assertion**, separating each block
-  with a blank line for readability.
+Inherited from upstream. Keep these so our tests PR back cleanly.
+
+- **One behavior per test.** Short, focused.
+- **Name tests using active verbs** — `returns correct value`, `throws on invalid input`, `emits event`. Avoid starting with "should …".
+- **Setup → execution → assertion** structure, separated by blank lines:
 
   ```js
   const store = createStore();
@@ -103,12 +209,35 @@ Never update `CHANGES.md`.
   expect(result).toEqual('x');
   ```
 
-- Do not modify implementation code to make tests pass; adjust the test or fix
-  the underlying issue instead.
+- **Do not modify implementation code to make tests pass.** Fix the test or fix the underlying bug.
+- **Co-locate tests** next to the code they test: `workspace-picker.js` ↔ `workspace-picker.test.js`.
+- Run a specific test file: `npx vitest run app/views/workspace-picker.test.js`.
 
-## Pre‑Handoff Validation
+---
 
-- Run type checks: `npm run tsc`
-- Run tests: `npm test`
-- Run eslint: `npm run lint`
-- Run prettier: `npm run prettier:write`
+## Debug Logging
+
+- Uses the `debug` package with namespaces under `beads-ui:*`.
+- Browser: `localStorage.debug = 'beads-ui:*'`, then reload.
+- Server / CLI: `DEBUG=beads-ui:* bdui start`, or `DEBUG=beads-ui:* node server/index.js`.
+- Filter to specific namespaces: `DEBUG=beads-ui:ws,beads-ui:list-adapters bdui start`.
+
+---
+
+## Pre-Handoff Checklist
+
+Before handing work back to the user (or opening a PR):
+
+1. `npm run all` passes (lint + tsc + test + prettier:check).
+2. New or changed behavior has tests.
+3. Relevant issue is referenced in the commit footer.
+4. `.specs/` file updated if the approach changed.
+5. Screenshot or `curl` evidence attached if the change is UI-visible or HTTP-visible.
+6. Upstream sync: if the fix is upstreamable, a PR to `mantoni/beads-ui` is drafted (or a task captured in the spec to do so later).
+
+---
+
+## Platform Notes
+
+- **macOS / Linux**: fully supported.
+- **Windows**: the CLI uses `cmd /c start` to open URLs and relies on Node's `process.kill` semantics for stopping the daemon. Not tested in this fork.
