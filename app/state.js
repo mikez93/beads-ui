@@ -29,6 +29,7 @@ import { debug } from './utils/logging.js';
  * @property {string} database - Path to the database file
  * @property {number} [pid] - Process ID of the daemon
  * @property {string} [version] - Version of beads
+ * @property {string | null} [branch] - Git branch name (for disambiguation)
  */
 
 /**

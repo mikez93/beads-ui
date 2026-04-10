@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -6,10 +7,31 @@ import { debug } from './logging.js';
 const log = debug('registry-watcher');
 
 /**
+ * Detect the current git branch for a workspace directory.
+ * Returns `null` when the directory is not a git repo or the branch cannot be
+ * determined (e.g. detached HEAD).
+ *
+ * @param {string} workspace_path
+ * @returns {string | null}
+ */
+function detectBranch(workspace_path) {
+  try {
+    const branch = execSync('git rev-parse --abbrev-ref HEAD', {
+      cwd: workspace_path,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore']
+    }).trim();
+    return branch && branch !== 'HEAD' ? branch : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * In-memory registry of workspaces registered dynamically via the API.
  * These supplement the file-based registry at ~/.beads/registry.json.
  *
- * @type {Map<string, { path: string, database: string, pid: number, version: string }>}
+ * @type {Map<string, { path: string, database: string, pid: number, version: string, branch: string | null }>}
  */
 const inMemoryWorkspaces = new Map();
 
@@ -21,19 +43,26 @@ const inMemoryWorkspaces = new Map();
  */
 export function registerWorkspace(workspace) {
   const normalized = path.resolve(workspace.path);
-  log('registering workspace: %s (db: %s)', normalized, workspace.database);
+  const branch = detectBranch(normalized);
+  log(
+    'registering workspace: %s (db: %s, branch: %s)',
+    normalized,
+    workspace.database,
+    branch
+  );
   inMemoryWorkspaces.set(normalized, {
     path: normalized,
     database: workspace.database,
     pid: process.pid,
-    version: 'dynamic'
+    version: 'dynamic',
+    branch
   });
 }
 
 /**
  * Get all dynamically registered workspaces (in-memory only).
  *
- * @returns {Array<{ path: string, database: string, pid: number, version: string }>}
+ * @returns {Array<{ path: string, database: string, pid: number, version: string, branch: string | null }>}
  */
 export function getInMemoryWorkspaces() {
   return Array.from(inMemoryWorkspaces.values());
@@ -47,6 +76,7 @@ export function getInMemoryWorkspaces() {
  * @property {number} pid
  * @property {string} version
  * @property {string} started_at
+ * @property {string} [branch]
  */
 
 /**
@@ -110,7 +140,7 @@ export function findWorkspaceEntry(root_dir) {
  * Get all available workspaces from both the file-based registry and
  * dynamically registered in-memory workspaces.
  *
- * @returns {Array<{ path: string, database: string, pid: number, version: string }>}
+ * @returns {Array<{ path: string, database: string, pid: number, version: string, branch: string | null }>}
  */
 export function getAvailableWorkspaces() {
   const entries = readRegistry();
@@ -118,7 +148,8 @@ export function getAvailableWorkspaces() {
     path: entry.workspace_path,
     database: entry.database_path,
     pid: entry.pid,
-    version: entry.version
+    version: entry.version,
+    branch: entry.branch ?? detectBranch(entry.workspace_path)
   }));
 
   // Merge in-memory workspaces, avoiding duplicates by path

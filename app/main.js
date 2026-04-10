@@ -277,7 +277,8 @@ export function bootstrap(root_element) {
             path: ws.path,
             database: ws.database,
             pid: ws.pid,
-            version: ws.version
+            version: ws.version,
+            branch: ws.branch ?? null
           }));
           const current = result.current
             ? {

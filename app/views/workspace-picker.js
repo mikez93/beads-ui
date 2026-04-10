@@ -12,10 +12,40 @@ import { debug } from '../utils/logging.js';
  * @param {string} workspace_path
  * @returns {string}
  */
-function getProjectName(workspace_path) {
+export function getProjectName(workspace_path) {
   if (!workspace_path) return 'Unknown';
   const parts = workspace_path.split('/').filter(Boolean);
   return parts.length > 0 ? parts[parts.length - 1] : 'Unknown';
+}
+
+/**
+ * Build a display label for a workspace, appending a disambiguator when
+ * multiple workspaces share the same basename.
+ *
+ * Strategy:
+ *   1. If no collision → bare basename (e.g. `myrepo`)
+ *   2. If collision and branch available → `myrepo (feature-a)`
+ *   3. If collision but no branch → `myrepo (parent-dir)`
+ *
+ * @param {WorkspaceInfo} ws
+ * @param {WorkspaceInfo[]} all_workspaces
+ * @returns {string}
+ */
+export function getDisplayLabel(ws, all_workspaces) {
+  const name = getProjectName(ws.path);
+  const duplicates = all_workspaces.filter(
+    (other) => getProjectName(other.path) === name
+  );
+  if (duplicates.length <= 1) {
+    return name;
+  }
+  // Disambiguate: prefer branch, fall back to parent directory
+  if (ws.branch) {
+    return `${name} (${ws.branch})`;
+  }
+  const parts = ws.path.split('/').filter(Boolean);
+  const parent = parts.length >= 2 ? parts[parts.length - 2] : '';
+  return parent ? `${name} (${parent})` : name;
 }
 
 /**
@@ -70,7 +100,7 @@ export function createWorkspacePicker(mount_element, store, onWorkspaceChange) {
 
     // If only one workspace, show it as a simple label
     if (available.length === 1) {
-      const name = getProjectName(available[0].path);
+      const name = getDisplayLabel(available[0], available);
       return html`
         <div class="workspace-picker workspace-picker--single">
           <span class="workspace-picker__label" title="${available[0].path}"
@@ -97,7 +127,7 @@ export function createWorkspacePicker(mount_element, store, onWorkspaceChange) {
                 ?selected=${ws.path === current_path}
                 title="${ws.path}"
               >
-                ${getProjectName(ws.path)}
+                ${getDisplayLabel(ws, available)}
               </option>
             `
           )}
