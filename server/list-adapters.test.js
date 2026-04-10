@@ -20,8 +20,7 @@ describe('list adapters for subscription types', () => {
       '--tree=false',
       '--limit',
       '0',
-      '--status',
-      'all'
+      '--all'
     ]);
   });
 
