@@ -33,10 +33,16 @@ export function getProjectName(workspace_path) {
  */
 export function getDisplayLabel(ws, all_workspaces) {
   const name = getProjectName(ws.path);
-  const duplicates = all_workspaces.filter(
-    (other) => getProjectName(other.path) === name
-  );
-  if (duplicates.length <= 1) {
+
+  // Precompute basename frequency to avoid O(N) filter per call
+  /** @type {number} */
+  let duplicate_count = 0;
+  for (const other of all_workspaces) {
+    if (getProjectName(other.path) === name) {
+      duplicate_count++;
+    }
+  }
+  if (duplicate_count <= 1) {
     return name;
   }
   // Disambiguate: prefer branch, fall back to parent directory

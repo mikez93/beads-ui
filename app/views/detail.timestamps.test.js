@@ -1,6 +1,19 @@
 import { describe, expect, test } from 'vitest';
 import { createDetailView } from './detail.js';
 
+/** @param {any} issue */
+function createStores(issue) {
+  return {
+    /** @param {string} id */
+    snapshotFor(id) {
+      return id === `detail:${issue.id}` ? [issue] : [];
+    },
+    subscribe() {
+      return () => {};
+    }
+  };
+}
+
 describe('views/detail timestamps (#42)', () => {
   test('displays created_at timestamp in properties sidebar', async () => {
     document.body.innerHTML =
@@ -17,15 +30,7 @@ describe('views/detail timestamps (#42)', () => {
       dependents: []
     };
 
-    const stores = {
-      /** @param {string} id */
-      snapshotFor(id) {
-        return id === 'detail:UI-42' ? [issue] : [];
-      },
-      subscribe() {
-        return () => {};
-      }
-    };
+    const stores = createStores(issue);
     const view = createDetailView(mount, async () => ({}), undefined, stores);
     await view.load('UI-42');
 
@@ -59,15 +64,7 @@ describe('views/detail timestamps (#42)', () => {
       dependents: []
     };
 
-    const stores = {
-      /** @param {string} id */
-      snapshotFor(id) {
-        return id === 'detail:UI-43' ? [issue] : [];
-      },
-      subscribe() {
-        return () => {};
-      }
-    };
+    const stores = createStores(issue);
     const view = createDetailView(mount, async () => ({}), undefined, stores);
     await view.load('UI-43');
 
@@ -101,15 +98,7 @@ describe('views/detail timestamps (#42)', () => {
       dependents: []
     };
 
-    const stores = {
-      /** @param {string} id */
-      snapshotFor(id) {
-        return id === 'detail:UI-44' ? [issue] : [];
-      },
-      subscribe() {
-        return () => {};
-      }
-    };
+    const stores = createStores(issue);
     const view = createDetailView(mount, async () => ({}), undefined, stores);
     await view.load('UI-44');
 
@@ -135,15 +124,7 @@ describe('views/detail timestamps (#42)', () => {
       dependents: []
     };
 
-    const stores = {
-      /** @param {string} id */
-      snapshotFor(id) {
-        return id === 'detail:UI-45' ? [issue] : [];
-      },
-      subscribe() {
-        return () => {};
-      }
-    };
+    const stores = createStores(issue);
     const view = createDetailView(mount, async () => ({}), undefined, stores);
     await view.load('UI-45');
 

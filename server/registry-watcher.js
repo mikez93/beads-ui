@@ -7,6 +7,15 @@ import { debug } from './logging.js';
 const log = debug('registry-watcher');
 
 /**
+ * Cache of detected branches for file-registry workspace paths.
+ * Populated lazily in {@link getAvailableWorkspaces} and cleared when the
+ * registry file changes so stale entries don't linger.
+ *
+ * @type {Map<string, string | null>}
+ */
+const branch_cache = new Map();
+
+/**
  * Detect the current git branch for a workspace directory.
  * Returns `null` when the directory is not a git repo or the branch cannot be
  * determined (e.g. detached HEAD).
@@ -144,13 +153,25 @@ export function findWorkspaceEntry(root_dir) {
  */
 export function getAvailableWorkspaces() {
   const entries = readRegistry();
-  const fileWorkspaces = entries.map((entry) => ({
-    path: entry.workspace_path,
-    database: entry.database_path,
-    pid: entry.pid,
-    version: entry.version,
-    branch: entry.branch ?? detectBranch(entry.workspace_path)
-  }));
+  const fileWorkspaces = entries.map((entry) => {
+    const wp = entry.workspace_path;
+    let branch = entry.branch ?? null;
+    if (!branch) {
+      if (branch_cache.has(wp)) {
+        branch = branch_cache.get(wp) ?? null;
+      } else {
+        branch = detectBranch(wp);
+        branch_cache.set(wp, branch);
+      }
+    }
+    return {
+      path: wp,
+      database: entry.database_path,
+      pid: entry.pid,
+      version: entry.version,
+      branch
+    };
+  });
 
   // Merge in-memory workspaces, avoiding duplicates by path
   const seen = new Set(fileWorkspaces.map((w) => path.resolve(w.path)));
@@ -185,6 +206,7 @@ export function watchRegistry(onChange, options = {}) {
     }
     timer = setTimeout(() => {
       try {
+        branch_cache.clear();
         const entries = readRegistry();
         onChange(entries);
       } catch (err) {

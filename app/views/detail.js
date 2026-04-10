@@ -13,11 +13,11 @@ import { createTypeBadge } from '../utils/type-badge.js';
 /**
  * Format a date string for display.
  *
- * @param {string} [dateStr]
+ * @param {string | number} [dateStr]
  * @returns {string}
  */
 function formatCommentDate(dateStr) {
-  if (!dateStr) return '';
+  if (!dateStr && dateStr !== 0) return '';
   try {
     const date = new Date(dateStr);
     return date.toLocaleDateString(undefined, {
@@ -28,7 +28,7 @@ function formatCommentDate(dateStr) {
       minute: '2-digit'
     });
   } catch {
-    return dateStr;
+    return String(dateStr);
   }
 }
 
@@ -61,8 +61,8 @@ function formatCommentDate(dateStr) {
  * @property {(string|null)} [close_reason]
  * @property {string} [assignee]
  * @property {number} [priority]
- * @property {string} [created_at]
- * @property {string} [closed_at]
+ * @property {string | number} [created_at]
+ * @property {string | number} [closed_at]
  * @property {string[]} [labels]
  * @property {Dependency[]} [dependencies]
  * @property {Dependency[]} [dependents]

@@ -17,9 +17,11 @@ export function mapSubscriptionToBdArgs(spec) {
       return ['list', '--json', '--tree=false', '--limit', '0', '--all'];
     }
     case 'epics': {
+      // Note: `bd epic status` does not accept --limit (verified against bd 1.0.0)
       return ['epic', 'status', '--json'];
     }
     case 'blocked-issues': {
+      // Note: `bd blocked` does not accept --limit (verified against bd 1.0.0)
       return ['blocked', '--json'];
     }
     case 'ready-issues': {

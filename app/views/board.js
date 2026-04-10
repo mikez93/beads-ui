@@ -19,6 +19,7 @@ import { createTypeBadge } from '../utils/type-badge.js';
  *   closed_at?: number,
  *   comment_count?: number
  * }} IssueLite
+ * Note: comment_count may not be provided by all bd versions; defaults to 0 when absent.
  */
 
 /**
@@ -166,7 +167,7 @@ export function createBoardView(
    * @param {IssueLite} it
    */
   function cardTemplate(it) {
-    const cc = Number(it.comment_count) || 0;
+    const comment_count = Number(it.comment_count) || 0;
     return html`
       <article
         class="board-card"
@@ -184,11 +185,11 @@ export function createBoardView(
         <div class="board-card__meta">
           ${createTypeBadge(it.issue_type)} ${createPriorityBadge(it.priority)}
           ${createIssueIdRenderer(it.id, { class_name: 'mono' })}
-          ${cc > 0
+          ${comment_count > 0
             ? html`<span
                 class="badge board-card__comments"
-                title="${cc} comment${cc === 1 ? '' : 's'} — click to view"
-                >${cc}</span
+                title="${comment_count} comment${comment_count === 1 ? '' : 's'} — click to view"
+                >${comment_count}</span
               >`
             : ''}
         </div>
