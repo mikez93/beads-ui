@@ -1199,6 +1199,17 @@ input.inline-edit:focus {
     font-weight: 600;
   }
 }
+/* Prevent long project-prefixed IDs from overflowing the ID column (#57) */
+.table td:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.table td:first-child .id-copy {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .epic-row:hover {
   background: color-mix(in srgb, var(--control-bg) 55%, transparent);
 }

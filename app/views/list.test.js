@@ -749,4 +749,94 @@ describe('views/list', () => {
     await Promise.resolve();
     expect(mount.querySelectorAll('tr.issue-row').length).toBe(2);
   });
+
+  test('renders long project-prefixed IDs without overlap (#57)', async () => {
+    document.body.innerHTML = '<aside id="mount" class="panel"></aside>';
+    const mount = /** @type {HTMLElement} */ (document.getElementById('mount'));
+    const issues = [
+      {
+        id: 'trophy-master-mind-djd',
+        title: 'Long ID issue',
+        status: 'open',
+        priority: 1,
+        issue_type: 'task'
+      },
+      {
+        id: 'UI-1',
+        title: 'Short ID issue',
+        status: 'open',
+        priority: 2,
+        issue_type: 'bug'
+      }
+    ];
+    const issueStores = createTestIssueStores();
+    issueStores.getStore('tab:issues').applyPush({
+      type: 'snapshot',
+      id: 'tab:issues',
+      revision: 1,
+      issues
+    });
+
+    const view = createListView(
+      mount,
+      async () => [],
+      (hash) => {
+        window.location.hash = hash;
+      },
+      undefined,
+      undefined,
+      issueStores
+    );
+    await view.load();
+
+    const rows = mount.querySelectorAll('tr.issue-row');
+    expect(rows.length).toBe(2);
+
+    // Long ID is rendered correctly in the first cell
+    const long_id_cell = /** @type {HTMLElement} */ (
+      rows[0].querySelector('td:first-child')
+    );
+    const id_btn = long_id_cell.querySelector('.id-copy');
+    expect(id_btn).not.toBeNull();
+    expect(id_btn?.textContent).toBe('trophy-master-mind-djd');
+    expect(id_btn?.getAttribute('title')).toBe(
+      'trophy-master-mind-djd — click to copy'
+    );
+
+    // Short ID also renders cleanly
+    const short_id_cell = /** @type {HTMLElement} */ (
+      rows[1].querySelector('td:first-child')
+    );
+    const short_btn = short_id_cell.querySelector('.id-copy');
+    expect(short_btn).not.toBeNull();
+    expect(short_btn?.textContent).toBe('UI-1');
+  });
+
+  test('ID column width accommodates long IDs in colgroup', async () => {
+    document.body.innerHTML = '<aside id="mount" class="panel"></aside>';
+    const mount = /** @type {HTMLElement} */ (document.getElementById('mount'));
+    const issues = [{ id: 'UI-1', title: 'Test', status: 'open', priority: 1 }];
+    const issueStores = createTestIssueStores();
+    issueStores.getStore('tab:issues').applyPush({
+      type: 'snapshot',
+      id: 'tab:issues',
+      revision: 1,
+      issues
+    });
+
+    const view = createListView(
+      mount,
+      async () => [],
+      undefined,
+      undefined,
+      undefined,
+      issueStores
+    );
+    await view.load();
+
+    // Verify the first col in the colgroup is 180px (not the old 100px)
+    const first_col = mount.querySelector('colgroup col:first-child');
+    expect(first_col).not.toBeNull();
+    expect(first_col?.getAttribute('style')).toBe('width: 180px');
+  });
 });

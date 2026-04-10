@@ -295,7 +295,7 @@ export function createListView(
                 aria-colcount="6"
               >
                 <colgroup>
-                  <col style="width: 100px" />
+                  <col style="width: 180px" />
                   <col style="width: 120px" />
                   <col />
                   <col style="width: 120px" />

@@ -19,7 +19,7 @@ export function createIssueIdRenderer(id, opts) {
     (opts?.class_name ? opts.class_name + ' ' : '') + 'mono id-copy';
   btn.type = 'button';
   btn.setAttribute('aria-live', 'polite');
-  btn.setAttribute('title', 'Copy issue ID');
+  btn.setAttribute('title', `${id} — click to copy`);
   btn.setAttribute('aria-label', `Copy issue ID ${id}`);
   btn.textContent = id;
 
