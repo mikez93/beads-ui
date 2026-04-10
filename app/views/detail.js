@@ -61,6 +61,8 @@ function formatCommentDate(dateStr) {
  * @property {(string|null)} [close_reason]
  * @property {string} [assignee]
  * @property {number} [priority]
+ * @property {string} [created_at]
+ * @property {string} [closed_at]
  * @property {string[]} [labels]
  * @property {Dependency[]} [dependencies]
  * @property {Dependency[]} [dependents]
@@ -1309,6 +1311,26 @@ export function createDetailView(
                   </div>
                 </div>
               </div>
+              ${
+                issue.created_at
+                  ? html`<div class="prop">
+                      <div class="label">Created</div>
+                      <div class="value muted">
+                        ${formatCommentDate(issue.created_at)}
+                      </div>
+                    </div>`
+                  : ''
+              }
+              ${
+                issue.closed_at
+                  ? html`<div class="prop">
+                      <div class="label">Closed</div>
+                      <div class="value muted">
+                        ${formatCommentDate(issue.closed_at)}
+                      </div>
+                    </div>`
+                  : ''
+              }
               ${labels_block}
               ${depsSection('Dependencies', issue.dependencies || [])}
               ${depsSection('Dependents', issue.dependents || [])}
