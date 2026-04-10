@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { discoverAndRegisterWorkspaces } from './auto-discover.js';
 import { createApp } from './app.js';
 import { printServerUrl } from './cli/daemon.js';
 import { getConfig } from './config.js';
@@ -36,6 +37,12 @@ if (workspace_database.source !== 'home-default' && workspace_database.exists) {
     database: workspace_database.path
   });
 }
+
+// Auto-discover and register all beads repos found under scan paths.
+// Runs synchronously before the server starts listening so all workspaces
+// are available in the dropdown immediately on first page load.
+// Configure via: BDUI_DISCOVER_PATHS, BDUI_DISCOVER_DEPTH, BDUI_DISCOVER=false
+discoverAndRegisterWorkspaces();
 
 // Watch the active beads DB and schedule subscription refresh for active lists
 const db_watcher = watchDb(config.root_dir, () => {
