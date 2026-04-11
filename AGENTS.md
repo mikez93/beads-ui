@@ -2,35 +2,62 @@
 
 ## About This Fork
 
-This is **[mikez93/beads-ui](https://github.com/mikez93/beads-ui)** — a fork of [mantoni/beads-ui](https://github.com/mantoni/beads-ui), the web UI for the [Beads](https://github.com/steveyegge/beads) CLI.
+This is **[mikez93/beads-ui](https://github.com/mikez93/beads-ui)** — a fork of
+[mantoni/beads-ui](https://github.com/mantoni/beads-ui), the web UI for the
+[Beads](https://github.com/steveyegge/beads) CLI.
 
-**Why this fork exists**: upstream has accumulated known bugs that are not getting fixed — P0 issues we've been patching locally for months on every release, UX bugs that break multi-worktree workflows, and silent failures in the board and comment code paths. Rather than continue re-applying patches on every upstream update, we took ownership. We fix the bugs properly, open PRs back to upstream when the fixes are generic, and ship our own npm package when upstream stays behind.
+**Why this fork exists**: upstream has accumulated known bugs that are not
+getting fixed — P0 issues we've been patching locally for months on every
+release, UX bugs that break multi-worktree workflows, and silent failures in the
+board and comment code paths. Rather than continue re-applying patches on every
+upstream update, we took ownership. We fix the bugs properly, open PRs back to
+upstream when the fixes are generic, and ship our own npm package when upstream
+stays behind.
 
-**This is the primary web UI for Beads in our setup.** It replaces `bead-kanban` (unmaintained since Nov 2025). See `../agentic-coding-resources/intel-vault/tools/beads-ecosystem/beads-ui/README.md` in the sibling intel-vault for the broader ecosystem context, deployment notes, and the history of why we got here.
+**This is the primary web UI for Beads in our setup.** It replaces `bead-kanban`
+(unmaintained since Nov 2025). See
+`../agentic-coding-resources/intel-vault/tools/beads-ecosystem/beads-ui/README.md`
+in the sibling intel-vault for the broader ecosystem context, deployment notes,
+and the history of why we got here.
 
 ### Upstream relationship
 
 - `origin` → this fork (`mikez93/beads-ui`)
 - `upstream` → `mantoni/beads-ui`
 - We pull from `upstream/main` periodically and rebase our fixes on top.
-- When a fix is upstreamable (most of ours are), we open a PR back to `mantoni/beads-ui`.
-- When a fix is fork-specific (e.g., branding or behavior we want that upstream won't accept), we keep it local.
+- When a fix is upstreamable (most of ours are), we open a PR back to
+  `mantoni/beads-ui`.
+- When a fix is fork-specific (e.g., branding or behavior we want that upstream
+  won't accept), we keep it local.
 
 ### Current work
 
-See `.specs/` for active PRDs and phase plans. Start with the most recently dated file. **Before implementing any non-trivial change, create or update a spec in `.specs/` first.**
+See `.specs/` for active PRDs and phase plans. Start with the most recently
+dated file. **Before implementing any non-trivial change, create or update a
+spec in `.specs/` first.**
 
 ### Known issues we're tracking (upstream)
 
-- **[#58](https://github.com/mantoni/beads-ui/issues/58)** — P0 — Issues view limited to 50, "Status: Any" excludes closed. We've been patching this locally in `server/list-adapters.js` for months. Upstream issue is still open.
-- **[#77](https://github.com/mantoni/beads-ui/issues/77)** — P0 — Workspace dropdown shows identical labels for worktrees of the same repo. We filed this one ourselves.
-- **[#57](https://github.com/mantoni/beads-ui/issues/57)** — P0 — Issue/epic list columns overlap with long project-prefixed IDs.
-- **[#67](https://github.com/mantoni/beads-ui/issues/67)** — P1 — Board: adding a comment appears to succeed but the comment is never saved or shown.
-- **[#68](https://github.com/mantoni/beads-ui/issues/68)** — P1 — Failed to load board because of unknown flag.
-- **[#74](https://github.com/mantoni/beads-ui/issues/74)** — P1 — Cannot create comment from the UI.
-- **[#42](https://github.com/mantoni/beads-ui/issues/42)** — P2 — Show `created_at` and `closed_at` timestamps in issue detail view.
-- **[#41](https://github.com/mantoni/beads-ui/issues/41)** — P2 — Allow editing and deleting comments.
-- **[#49](https://github.com/mantoni/beads-ui/issues/49)** — P3 — Show status indicators for dependencies / dependents.
+- **[#58](https://github.com/mantoni/beads-ui/issues/58)** — P0 — Issues view
+  limited to 50, "Status: Any" excludes closed. We've been patching this locally
+  in `server/list-adapters.js` for months. Upstream issue is still open.
+- **[#77](https://github.com/mantoni/beads-ui/issues/77)** — P0 — Workspace
+  dropdown shows identical labels for worktrees of the same repo. We filed this
+  one ourselves.
+- **[#57](https://github.com/mantoni/beads-ui/issues/57)** — P0 — Issue/epic
+  list columns overlap with long project-prefixed IDs.
+- **[#67](https://github.com/mantoni/beads-ui/issues/67)** — P1 — Board: adding
+  a comment appears to succeed but the comment is never saved or shown.
+- **[#68](https://github.com/mantoni/beads-ui/issues/68)** — P1 — Failed to load
+  board because of unknown flag.
+- **[#74](https://github.com/mantoni/beads-ui/issues/74)** — P1 — Cannot create
+  comment from the UI.
+- **[#42](https://github.com/mantoni/beads-ui/issues/42)** — P2 — Show
+  `created_at` and `closed_at` timestamps in issue detail view.
+- **[#41](https://github.com/mantoni/beads-ui/issues/41)** — P2 — Allow editing
+  and deleting comments.
+- **[#49](https://github.com/mantoni/beads-ui/issues/49)** — P3 — Show status
+  indicators for dependencies / dependents.
 
 Lower-priority backlog captured in `.specs/`.
 
@@ -57,25 +84,27 @@ npm run all           # lint + tsc + test + prettier:check
 
 Individual commands:
 
-| Command | Purpose |
-|---|---|
-| `npm run lint` | ESLint |
-| `npm run tsc` | TypeScript type check (JSDoc mode — no emit) |
-| `npm test` | Vitest run (all test files) |
-| `npm run test:watch` | Vitest in watch mode |
-| `npm run prettier:write` | Format all files |
-| `npm run prettier:check` | Check formatting (CI-compatible) |
-| `npm run build` | Build the client bundle (`app/main.bundle.js`) |
+| Command                  | Purpose                                        |
+| ------------------------ | ---------------------------------------------- |
+| `npm run lint`           | ESLint                                         |
+| `npm run tsc`            | TypeScript type check (JSDoc mode — no emit)   |
+| `npm test`               | Vitest run (all test files)                    |
+| `npm run test:watch`     | Vitest in watch mode                           |
+| `npm run prettier:write` | Format all files                               |
+| `npm run prettier:check` | Check formatting (CI-compatible)               |
+| `npm run build`          | Build the client bundle (`app/main.bundle.js`) |
 
 ### Spec-driven development
 
-Every non-trivial change starts with a spec in `.specs/`. File naming: `YYYY-MM-DD-descriptive-slug.md` (use today's date, short kebab-case slug).
+Every non-trivial change starts with a spec in `.specs/`. File naming:
+`YYYY-MM-DD-descriptive-slug.md` (use today's date, short kebab-case slug).
 
 Specs should include:
 
 - Context and problem statement
 - Goals and non-goals
-- Phased plan with file-level detail (target files, line numbers, specific changes)
+- Phased plan with file-level detail (target files, line numbers, specific
+  changes)
 - Testing strategy (what tests to add, what to verify manually)
 - Success criteria
 
@@ -83,10 +112,13 @@ The spec is the source of truth for the work. Update it as you learn.
 
 ### Commits
 
-- Follow conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `perf:`
+- Follow conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`,
+  `test:`, `perf:`
 - Reference GitHub issues in the footer: `Refs: #58` or `Fixes: #77`
-- Reference the spec file when relevant: `Spec: .specs/2026-04-09-fork-stabilization-prd.md`
-- **Never update `CHANGES.md` manually** — it is generated by `@studio/changes` during release.
+- Reference the spec file when relevant:
+  `Spec: .specs/2026-04-09-fork-stabilization-prd.md`
+- **Never update `CHANGES.md` manually** — it is generated by `@studio/changes`
+  during release.
 
 ### Upstream sync
 
@@ -110,7 +142,8 @@ When a fix is ready and generic enough to benefit all users:
 gh pr create --repo mantoni/beads-ui --base main --title "fix: ..." --body "Fixes #NN. ..."
 ```
 
-Keep PRs small and focused — one issue per PR. Include the upstream issue number in the title.
+Keep PRs small and focused — one issue per PR. Include the upstream issue number
+in the title.
 
 ---
 
@@ -151,23 +184,26 @@ beads-ui/
 
 ## Coding Standards
 
-Inherited from upstream — keep these intact so our PRs back to upstream are clean.
+Inherited from upstream — keep these intact so our PRs back to upstream are
+clean.
 
 - **ECMAScript modules** (`.js` with `"type": "module"` in `package.json`).
-- **JSDoc type annotations** — this project uses TypeScript in strict mode via `tsc --noEmit` against JSDoc. Type errors block CI.
-- **`.ts` files** are for **interface/type definitions only** — no runtime code, no side effects.
+- **JSDoc type annotations** — this project uses TypeScript in strict mode via
+  `tsc --noEmit` against JSDoc. Type errors block CI.
+- **`.ts` files** are for **interface/type definitions only** — no runtime code,
+  no side effects.
 - **Node.js ≥22** required.
 
 ### Naming conventions
 
-| Category | Convention | Example |
-|---|---|---|
-| Classes, interfaces | `PascalCase` | `WorkspaceStore`, `IssueList` |
-| Functions, methods | `camelCase` | `fetchIssues`, `registerWorkspace` |
-| Variables, parameters | `lower_snake_case` | `workspace_path`, `bd_args` |
-| Function-valued variables | `camelCase` | `const handleClick = ...` |
-| Constants | `UPPER_SNAKE_CASE` | `MAX_RETRIES`, `DEFAULT_PORT` |
-| File and directory names | `kebab-case` | `workspace-picker.js` |
+| Category                  | Convention         | Example                            |
+| ------------------------- | ------------------ | ---------------------------------- |
+| Classes, interfaces       | `PascalCase`       | `WorkspaceStore`, `IssueList`      |
+| Functions, methods        | `camelCase`        | `fetchIssues`, `registerWorkspace` |
+| Variables, parameters     | `lower_snake_case` | `workspace_path`, `bd_args`        |
+| Function-valued variables | `camelCase`        | `const handleClick = ...`          |
+| Constants                 | `UPPER_SNAKE_CASE` | `MAX_RETRIES`, `DEFAULT_PORT`      |
+| File and directory names  | `kebab-case`       | `workspace-picker.js`              |
 
 ### JSDoc requirements
 
@@ -182,14 +218,19 @@ Place a JSDoc type import block at the top of each file when needed:
 Add JSDoc to all functions and methods:
 
 - Declare all parameters with `@param`.
-- Add `@returns` only when the return type is **not self-evident** from the code (complex conditionals, unions, context-dependent types). Omit it when return is clear from the signature or body.
+- Add `@returns` only when the return type is **not self-evident** from the code
+  (complex conditionals, unions, context-dependent types). Omit it when return
+  is clear from the signature or body.
 
-If a local variable's type may change, or is initialized as an empty collection (`{}`, `[]`, `new Set()`, `new Map()`), add a `@type` annotation to disambiguate.
+If a local variable's type may change, or is initialized as an empty collection
+(`{}`, `[]`, `new Set()`, `new Map()`), add a `@type` annotation to
+disambiguate.
 
 ### Control flow and nullability
 
 - **Braces for all control flow statements**, even single-line bodies.
-- Use optional chaining (`?.`, `??`) only when a value is **intentionally nullable**. Prefer explicit type narrowing over defensive chaining.
+- Use optional chaining (`?.`, `??`) only when a value is **intentionally
+  nullable**. Prefer explicit type narrowing over defensive chaining.
 
 ---
 
@@ -198,7 +239,8 @@ If a local variable's type may change, or is initialized as an empty collection 
 Inherited from upstream. Keep these so our tests PR back cleanly.
 
 - **One behavior per test.** Short, focused.
-- **Name tests using active verbs** — `returns correct value`, `throws on invalid input`, `emits event`. Avoid starting with "should …".
+- **Name tests using active verbs** — `returns correct value`,
+  `throws on invalid input`, `emits event`. Avoid starting with "should …".
 - **Setup → execution → assertion** structure, separated by blank lines:
 
   ```js
@@ -209,8 +251,10 @@ Inherited from upstream. Keep these so our tests PR back cleanly.
   expect(result).toEqual('x');
   ```
 
-- **Do not modify implementation code to make tests pass.** Fix the test or fix the underlying bug.
-- **Co-locate tests** next to the code they test: `workspace-picker.js` ↔ `workspace-picker.test.js`.
+- **Do not modify implementation code to make tests pass.** Fix the test or fix
+  the underlying bug.
+- **Co-locate tests** next to the code they test: `workspace-picker.js` ↔
+  `workspace-picker.test.js`.
 - Run a specific test file: `npx vitest run app/views/workspace-picker.test.js`.
 
 ---
@@ -219,8 +263,10 @@ Inherited from upstream. Keep these so our tests PR back cleanly.
 
 - Uses the `debug` package with namespaces under `beads-ui:*`.
 - Browser: `localStorage.debug = 'beads-ui:*'`, then reload.
-- Server / CLI: `DEBUG=beads-ui:* bdui start`, or `DEBUG=beads-ui:* node server/index.js`.
-- Filter to specific namespaces: `DEBUG=beads-ui:ws,beads-ui:list-adapters bdui start`.
+- Server / CLI: `DEBUG=beads-ui:* bdui start`, or
+  `DEBUG=beads-ui:* node server/index.js`.
+- Filter to specific namespaces:
+  `DEBUG=beads-ui:ws,beads-ui:list-adapters bdui start`.
 
 ---
 
@@ -232,12 +278,59 @@ Before handing work back to the user (or opening a PR):
 2. New or changed behavior has tests.
 3. Relevant issue is referenced in the commit footer.
 4. `.specs/` file updated if the approach changed.
-5. Screenshot or `curl` evidence attached if the change is UI-visible or HTTP-visible.
-6. Upstream sync: if the fix is upstreamable, a PR to `mantoni/beads-ui` is drafted (or a task captured in the spec to do so later).
+5. Screenshot or `curl` evidence attached if the change is UI-visible or
+   HTTP-visible.
+6. Upstream sync: if the fix is upstreamable, a PR to `mantoni/beads-ui` is
+   drafted (or a task captured in the spec to do so later).
 
 ---
 
 ## Platform Notes
 
 - **macOS / Linux**: fully supported.
-- **Windows**: the CLI uses `cmd /c start` to open URLs and relies on Node's `process.kill` semantics for stopping the daemon. Not tested in this fork.
+- **Windows**: the CLI uses `cmd /c start` to open URLs and relies on Node's
+  `process.kill` semantics for stopping the daemon. Not tested in this fork.
+
+---
+
+## Design Context
+
+Full design context lives in `.impeccable.md` at the project root. Key points:
+
+### Users
+
+Solo developers managing their own issues and agent tasks. Fast, focused work
+sessions — the UI is a visual complement to the `bd` CLI, not a replacement.
+
+### Brand Personality
+
+**Fast, sharp, technical.** A power-user precision instrument. Every pixel earns
+its place.
+
+### Emotional Goals
+
+- **Confidence & control** — Clear information hierarchy, no hidden state.
+- **Speed & efficiency** — Keyboard-first, minimal clicks, triage 20 issues in 2
+  minutes.
+- **Delight & craft** — Quietly excellent. Smooth transitions, tight alignment,
+  considered details.
+
+### Aesthetic Direction
+
+- **Reference**: Linear — keyboard-first, dense but polished.
+- **Anti-references**: NOT barebones/ugly-functional, NOT colorful/playful.
+- Light + dark mode. Deep navy dark theme. Neutral-first palette with purposeful
+  color accents.
+
+### Design Principles
+
+1. **Density over decoration** — Show more in less space. Compact rows,
+   data-rich views.
+2. **Speed is a feature** — Instant feedback, no unnecessary modals or loading
+   states.
+3. **Quiet confidence** — Restraint with color and animation. Content is the
+   loudest thing.
+4. **Craft in the details** — Alignment, spacing, transitions, focus states.
+   Polish matters.
+5. **Semantic color, not decorative** — Color always means something: status,
+   priority, type.
