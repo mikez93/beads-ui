@@ -43,8 +43,8 @@ describe('views/detail toast', () => {
       document.body.querySelector('.toast')
     );
     expect(toast).not.toBeNull();
-    expect(toast.style.position).toBe('fixed');
-    expect(toast.style.zIndex).toBe('1000');
+    expect(toast.classList.contains('toast')).toBe(true);
+    expect(toast.classList.contains('toast--error')).toBe(true);
 
     await vi.advanceTimersByTimeAsync(3000);
     vi.useRealTimers();

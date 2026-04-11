@@ -834,9 +834,9 @@ describe('views/list', () => {
     );
     await view.load();
 
-    // Verify the first col in the colgroup is 180px (not the old 100px)
+    // Verify the first col uses a percentage width for responsive scaling
     const first_col = mount.querySelector('colgroup col:first-child');
     expect(first_col).not.toBeNull();
-    expect(first_col?.getAttribute('style')).toBe('width: 180px');
+    expect(first_col?.getAttribute('style')).toBe('width: 20%');
   });
 });

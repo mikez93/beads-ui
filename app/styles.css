@@ -80,6 +80,11 @@
   --space-8: 16px;
   --space-9: 18px;
   --space-10: 20px;
+
+  /* Extended scale for layout spacing */
+  --space-12: 24px;
+  --space-16: 32px;
+  --space-24: 48px;
 }
 
 html,
@@ -1093,7 +1098,7 @@ input.inline-edit:focus {
 #detail-root .acceptance,
 #detail-root .design,
 #detail-root .notes {
-  margin-top: 32px;
+  margin-top: var(--space-16);
 }
 /* Keep editor font sizes consistent with read mode */
 #detail-root input[type='text'],
@@ -1135,7 +1140,7 @@ input.inline-edit:focus {
 .epic-group {
   border: 1px solid var(--border);
   border-radius: 6px;
-  margin: 10px 12px;
+  margin: var(--space-5) var(--space-6);
   overflow: hidden;
 }
 
@@ -1168,7 +1173,20 @@ input.inline-edit:focus {
   }
 }
 .epic-children {
-  padding: 8px 12px 12px;
+  padding: var(--space-4) var(--space-6) var(--space-6);
+}
+
+/* Epic header: title takes available space, progress pushed right */
+.epic-header > .text-truncate {
+  flex: 1;
+  min-width: 0;
+}
+
+.epic-progress {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
 }
 .table {
   width: 100%;
@@ -1547,7 +1565,7 @@ html[data-theme='dark'] {
 .detail-layout {
   display: grid;
   grid-template-columns: 1fr 320px;
-  gap: 32px;
+  gap: var(--space-16);
   align-items: start;
 }
 .detail-side {
@@ -1939,8 +1957,8 @@ html[data-theme='dark'] {
 
 /* Comments section */
 .comments {
-  margin-top: 24px;
-  padding-top: 16px;
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
   border-top: 1px solid var(--border);
 }
 
@@ -2009,17 +2027,17 @@ html[data-theme='dark'] {
   border-radius: 4px;
   padding: 4px 6px;
   cursor: pointer;
-  color: #c62828;
+  color: var(--danger, #c62828);
   transition:
     background 0.15s,
     border-color 0.15s;
 }
 .delete-issue-btn:hover {
-  background: rgba(198, 40, 40, 0.1);
-  border-color: rgba(198, 40, 40, 0.3);
+  background: color-mix(in srgb, var(--danger, #c62828) 10%, transparent);
+  border-color: color-mix(in srgb, var(--danger, #c62828) 30%, transparent);
 }
 .delete-issue-btn:focus-visible {
-  outline: 2px solid #c62828;
+  outline: 2px solid var(--danger, #c62828);
   outline-offset: 2px;
 }
 .delete-issue-btn svg {
@@ -2128,4 +2146,48 @@ html[data-theme='dark'] {
 .dep-count:hover,
 .dependent-count:hover {
   color: var(--fg);
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 1000;
+  color: #fff;
+  padding: var(--space-4) var(--space-5);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  animation: toast-in 200ms ease-out;
+}
+.toast--info {
+  background: color-mix(in srgb, var(--fg) 92%, transparent);
+}
+.toast--success {
+  background: color-mix(in srgb, var(--status-open-base) 72%, #000);
+}
+.toast--error {
+  background: color-mix(in srgb, var(--type-bug-base) 90%, #000);
+}
+.toast--out {
+  animation: toast-out 180ms ease-in forwards;
+}
+@keyframes toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes toast-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

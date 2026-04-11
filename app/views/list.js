@@ -285,7 +285,9 @@ export function createListView(
       <div class="panel__body" id="list-root">
         ${filtered.length === 0
           ? html`<div class="issues-block">
-              <div class="muted" style="padding:10px 12px;">No issues</div>
+              <div class="muted" style="padding:var(--space-5) var(--space-6)">
+                No issues
+              </div>
             </div>`
           : html`<div class="issues-block">
               <table
@@ -295,13 +297,13 @@ export function createListView(
                 aria-colcount="6"
               >
                 <colgroup>
-                  <col style="width: 180px" />
-                  <col style="width: 120px" />
+                  <col style="width: 20%" />
+                  <col style="width: 70px" />
                   <col />
+                  <col style="width: 100px" />
                   <col style="width: 120px" />
-                  <col style="width: 160px" />
-                  <col style="width: 130px" />
-                  <col style="width: 80px" />
+                  <col style="width: 110px" />
+                  <col style="width: 60px" />
                 </colgroup>
                 <thead>
                   <tr role="row">
