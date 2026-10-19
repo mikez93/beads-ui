@@ -2,6 +2,8 @@
 
 **Read `AGENTS.md` immediately.** This file is a pointer only.
 
+@AGENTS.md
+
 ## Confirmation
 
 On reading this file in Claude Code, print:
